@@ -2285,7 +2285,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 678548477}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f67c7e722ba14acd9153bb4488bff6e4, type: 3}
+  m_Script: {fileID: 11500000, guid: 6bb6b867a41448888c1cd4f99643ad71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   sensorName: RayPerceptionSensor
@@ -2304,6 +2304,8 @@ MonoBehaviour:
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
   useWorldPositions: 1
+  startVerticalOffset: 0
+  endVerticalOffset: 0
 --- !u!114 &678548480
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2322,9 +2324,9 @@ MonoBehaviour:
     vectorActionSize: 0200000003000000
     vectorActionDescriptions: []
     vectorActionSpaceType: 0
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: 13d7dc981ac070240bd63611ef1614af, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 1
+  m_BehaviorType: 0
   m_BehaviorName: Brain
   m_TeamID: 0
   m_UseChildSensors: 1
@@ -2601,7 +2603,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 14.944756
+  orthographic size: 30.656162
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2701,7 +2703,7 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -1.3598652, y: -2.5105205, z: -1.0039072, w: -2.4756522}
+  m_margin: {x: -1.3598652, y: -2.122446, z: -1.0039072, w: -1.9766998}
   m_textInfo:
     textComponent: {fileID: 1230742097}
     characterCount: 0
@@ -2798,8 +2800,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -2.59, y: 1.4}
-  m_SizeDelta: {x: 19.952, y: 5.156}
+  m_AnchoredPosition: {x: 12.6, y: 11.7}
+  m_SizeDelta: {x: 19.84, y: 4.71}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1311813373
 GameObject:
@@ -2860,17 +2862,17 @@ PrefabInstance:
     - target: {fileID: 388458687224971746, guid: eb3638e429baccd468f8e85db1d289df,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 8
+      value: 8.25
       objectReference: {fileID: 0}
     - target: {fileID: 388458687224971746, guid: eb3638e429baccd468f8e85db1d289df,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3
+      value: 2.8
       objectReference: {fileID: 0}
     - target: {fileID: 388458687224971746, guid: eb3638e429baccd468f8e85db1d289df,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 388458687224971746, guid: eb3638e429baccd468f8e85db1d289df,
         type: 3}
@@ -2957,6 +2959,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerAgent: {fileID: 678548478}
   cumulativeRewardText: {fileID: 826698880}
+  startPosition: {x: 0, y: 0, z: 0}
 --- !u!4 &1777469906
 Transform:
   m_ObjectHideFlags: 0

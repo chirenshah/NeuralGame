@@ -13,10 +13,11 @@ public class playerAgent : Agent
 
     float steeringAmount, speed, direction;
 
-    private Vector3 parking = new Vector3(9f, -3.5f, 0f);
+    private Vector3 parking = new Vector3(-9f, -3.5f, 0f);
 
     private playerArea playerArea;
-    new private Rigidbody2D rb;
+    private Rigidbody2D rb;
+    private float parkRadius = 0f;
 
 
     /// <summary>
@@ -41,11 +42,11 @@ public class playerAgent : Agent
         float turnAmount = 0f;
         if (vectorAction[1] == 1f)
         {
-            turnAmount = -1f;
+            turnAmount = 1f;
         }
         else if (vectorAction[1] == 2f)
         {
-            turnAmount = 1f;
+            turnAmount = -1f;
         }
 
         // Apply movement
@@ -61,12 +62,9 @@ public class playerAgent : Agent
         // Apply a tiny negative reward every step to encourage action
         if (maxStep > 0)
         {
-            float reward = (19f - Vector3.Distance(parking, transform.position)/19);
-            AddReward(reward*0.001f);
-            if(Vector3.Distance(parking, transform.position) == 0)
-            {
-                Done();
-            }
+            float distance = Vector3.Distance(parking, transform.position);
+            AddReward((-1f/maxStep) - 0.0001f*distance);
+            //Debug.Log();
         }
     }
     /// <summary>
@@ -84,6 +82,7 @@ public class playerAgent : Agent
             // move forward
             forwardAction = 1f;
         }
+
         if (Input.GetKey(KeyCode.A))
         {
             // turn left
@@ -104,7 +103,7 @@ public class playerAgent : Agent
     public override void AgentReset()
     {
         playerArea.ResetArea();
-        Done();
+        parkRadius = Academy.Instance.FloatProperties.GetPropertyWithDefault("park_radius", 0f);
     }
     /// <summary>
     /// Collect all non-Raycast observations
@@ -136,6 +135,14 @@ public class playerAgent : Agent
         {
             RequestAction();
         }
+        //Debug.Log(Vector3.Distance(parking, transform.localPosition));
+        //Debug.Log(parkRadius+1f);
+        if (Vector3.Distance(parking, transform.localPosition) < parkRadius+1f)
+        {
+            AddReward(4f);
+            Debug.Log("woho" + GetCumulativeReward());
+            Done();
+        }
     }
     /// <summary>
     /// When the agent collides with something, take action
@@ -146,7 +153,7 @@ public class playerAgent : Agent
         if (collision.transform.CompareTag("Brick") || collision.transform.CompareTag("Obstacle"))
         {
             AddReward(-1f);
-            AgentReset();
+            Done();
         }
     }
 }
