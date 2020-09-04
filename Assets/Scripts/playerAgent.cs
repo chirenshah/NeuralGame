@@ -13,12 +13,29 @@ public class playerAgent : Agent
 
     float steeringAmount, speed, direction;
 
-    private Vector3 parking = new Vector3(-9f, -3.5f, 0f);
+    private Vector3 parking;
 
     private playerArea playerArea;
     private Rigidbody2D rb;
     private float parkRadius = 0f;
+    private float flag = 1f;
 
+    public void getrandom()
+    {
+        int fb = Random.Range(1, 4);
+        switch (fb)
+        {
+            case 1:
+                parking = new Vector3(-9, 5f, 0f);
+                break;
+            case 2:
+                parking = new Vector3(-9, 0.5f, 0f);
+                break;
+            case 3:
+                parking = new Vector3(-9, -5f, 0f);
+                break;
+        }
+    }
 
     /// <summary>
     /// Initial setup, called when the agent is enabled
@@ -35,8 +52,17 @@ public class playerAgent : Agent
     /// <param name="vectorAction">The list of actions to take</param>
     public override void AgentAction(float[] vectorAction)
     {
+        float forwardAmount = 0f;
         // Convert the first action to forward movement
-        float forwardAmount = vectorAction[0];
+        if (vectorAction[0] == 1f)
+        {
+            forwardAmount = 1f;
+        }
+
+        if (vectorAction[0] == 2f)
+        {
+            forwardAmount = -1f;
+        }
 
         // Convert the second action to turning left or right
         float turnAmount = 0f;
@@ -63,8 +89,7 @@ public class playerAgent : Agent
         if (maxStep > 0)
         {
             float distance = Vector3.Distance(parking, transform.position);
-            AddReward((-1f/maxStep) - 0.0001f*distance);
-            //Debug.Log();
+            AddReward(flag*(-1f/maxStep) - (flag*0.001f*distance));
         }
     }
     /// <summary>
@@ -81,6 +106,12 @@ public class playerAgent : Agent
         {
             // move forward
             forwardAction = 1f;
+        }
+
+        if (Input.GetKey(KeyCode.S))
+        {
+            // move forward
+            forwardAction = 2f;
         }
 
         if (Input.GetKey(KeyCode.A))
@@ -104,22 +135,55 @@ public class playerAgent : Agent
     {
         playerArea.ResetArea();
         parkRadius = Academy.Instance.FloatProperties.GetPropertyWithDefault("park_radius", 0f);
+        flag = Academy.Instance.FloatProperties.GetPropertyWithDefault("flag", 1f);
     }
     /// <summary>
     /// Collect all non-Raycast observations
     /// </summary>
     public override void CollectObservations()
     {
+        //Distance to collision (1 float = 1 value)
+        RaycastHit2D hitw = Physics2D.Raycast(transform.position , transform.TransformDirection(Vector2.up) , Mathf.Infinity);
+        if (hitw){
+            AddVectorObs(hitw.distance);
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector2.up) * hitw.distance, Color.red);
+        }
+
+        // distance to collision(1 float = 1 value)
+        RaycastHit2D hits = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.down), Mathf.Infinity);
+        if (hits)
+        {
+            AddVectorObs(hits.distance);
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector2.down) * hits.distance, Color.red);
+        }
+
+        //distance to collision (1 float = 1 value)
+        RaycastHit2D hitr = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.right), Mathf.Infinity);
+        if (hitr)
+        {
+            AddVectorObs(hitr.distance);
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector2.right) * hitr.distance, Color.red);
+        }
+
+        //distance to collision (1 float = 1 value)
+        RaycastHit2D hitl = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.left), Mathf.Infinity);
+        if (hitl)
+        {
+            AddVectorObs(hitl.distance);
+            Debug.DrawRay(transform.position, transform.TransformDirection(Vector2.left) * hitl.distance, Color.red);
+        }
+
         // Distance to the Parking (1 float = 1 value)
-        AddVectorObs(Vector3.Distance(parking, transform.position));
+        AddVectorObs(Vector2.Distance(parking, transform.position));
 
         // Direction to Parking (1 Vector3 = 3 values)
-        AddVectorObs((parking - transform.position).normalized);
+        AddVectorObs((parking - transform.position));
+        Debug.DrawRay(transform.position, (parking - transform.position) * (Vector2.Distance(parking, transform.position)), Color.green);
 
         // Direction Car is facing (1 Vector3 = 3 values)
         AddVectorObs(transform.forward);
 
-        //  1 + 3 + 3 = 7 total values
+        //  1+ 1 + 1 + 1 +1 + 3 + 3 = 11 total values
     }
     private void FixedUpdate()
     {
@@ -137,10 +201,10 @@ public class playerAgent : Agent
         }
         //Debug.Log(Vector3.Distance(parking, transform.localPosition));
         //Debug.Log(parkRadius+1f);
-        if (Vector3.Distance(parking, transform.localPosition) < parkRadius+1f)
+        if (Vector3.Distance(parking, transform.localPosition) < parkRadius )
         {
-            AddReward(4f);
-            Debug.Log("woho" + GetCumulativeReward());
+            AddReward(10f);
+            Debug.Log("woho " + GetCumulativeReward());
             Done();
         }
     }
@@ -157,3 +221,4 @@ public class playerAgent : Agent
         }
     }
 }
+//ml-agents-0.14.0>mlagents-learn config/trainer_config.yaml --curriculum config/curricula/parking.yaml --run-id 300803 --train
